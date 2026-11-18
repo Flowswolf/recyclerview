@@ -6,6 +6,15 @@
     android:id="@+id/main"
     android:padding="16dp">
 
+    <ToggleButton
+        android:id="@+id/btnToggleLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:checked="false"
+        android:textOff="Grid View"
+        android:textOn="List View" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvWayang"
         android:layout_width="match_parent"
