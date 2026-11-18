@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recyclerview.databinding.ActivityMainBinding
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val _arWayang = ArrayList<dcWayang>()
@@ -38,6 +39,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnToggleLayout.setOnCheckedChangeListener { _, _ ->
             tampilkanData()
+        }
+        binding.btnTambahData.setOnClickListener {
+            showDialogTambahData()
         }
     }
     private fun siapkanData() {
@@ -102,5 +106,43 @@ class MainActivity : AppCompatActivity() {
         binding.rvWayang.itemAnimator = DefaultItemAnimator().apply {
             removeDuration = 400L
         }
+    }
+    private fun showDialogTambahData() {
+        val dialogBinding = com.example.recyclerview.databinding.DialogTambahWayangBinding.inflate(layoutInflater)
+
+        AlertDialog.Builder(this)
+            .setTitle("Tambah Data Wayang")
+            .setView(dialogBinding.root)
+            .setPositiveButton("Simpan") { _, _ ->
+                val nama = dialogBinding.etNamaWayang.text.toString().trim()
+                val karakter = dialogBinding.etKarakterWayang.text.toString().trim()
+                val deskripsi = dialogBinding.etDeskripsiWayang.text.toString().trim()
+                val fotoInput = dialogBinding.etFotoWayang.text.toString().trim()
+
+                if (nama.isEmpty() || karakter.isEmpty() || deskripsi.isEmpty()) {
+                    Toast.makeText(this, "Nama, Karakter, dan Deskripsi wajib diisi!", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val foto = fotoInput.ifEmpty {
+                    if (_gambar.isNotEmpty()) _gambar[0] else ""
+                }
+
+                val wayangBaru = dcWayang(
+                    foto = foto,
+                    nama = nama,
+                    karakter = karakter,
+                    deskripsi = deskripsi
+                )
+
+                _arWayang.add(wayangBaru)
+                val posisiBaru = _arWayang.size - 1
+                binding.rvWayang.adapter?.notifyItemInserted(posisiBaru)
+                binding.rvWayang.scrollToPosition(posisiBaru)
+
+                Toast.makeText(this, "$nama berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Batal", null)
+            .show()
     }
 }
