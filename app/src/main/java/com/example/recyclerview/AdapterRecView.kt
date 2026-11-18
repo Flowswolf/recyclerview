@@ -11,6 +11,17 @@ import com.example.recyclerview.databinding.ItemRecyclerBinding
 class AdapterRecView(private val listWayang: ArrayList<dcWayang>) :
     RecyclerView.Adapter<AdapterRecView.ListViewHolder>() {
 
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: dcWayang)
+        fun delData(pos: Int)
+    }
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -44,12 +55,23 @@ class AdapterRecView(private val listWayang: ArrayList<dcWayang>) :
             error(R.drawable.ic_launcher_background)
         }
 
+        holder.binding.btnHapus.setOnClickListener {
+            val currentPosition = holder.bindingAdapterPosition
+            if (currentPosition != RecyclerView.NO_POSITION && ::onItemClickCallback.isInitialized) {
+                onItemClickCallback.delData(currentPosition)
+            }
+        }
+
         holder.binding.gambarWayang.setOnClickListener {
             Toast.makeText(
                 holder.itemView.context,
                 "Gambar ${wayang.nama} diklik",
                 Toast.LENGTH_SHORT
             ).show()
+
+            if (::onItemClickCallback.isInitialized) {
+                onItemClickCallback.onItemClicked(wayang)
+            }
         }
     }
 
